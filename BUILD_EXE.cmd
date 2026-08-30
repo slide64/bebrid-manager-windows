@@ -1,11 +1,11 @@
 @echo off
 setlocal EnableExtensions
 cd /d "%~dp0"
-title Bebrid Magic Windows 1.0.2 - Construction
+title Bebrid Magic Windows 1.0.3 - Construction
 
 echo.
 echo ============================================================
-echo   BEBRID MAGIC WINDOWS 1.0.2
+echo   BEBRID MAGIC WINDOWS 1.0.3
 echo   Construction de BebridMagic.exe
 echo ============================================================
 echo.

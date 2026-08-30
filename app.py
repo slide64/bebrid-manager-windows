@@ -18,7 +18,7 @@ from tkinter import filedialog, messagebox, ttk
 
 
 APP_NAME = "Bebrid Magic"
-VERSION = "1.0.2"
+VERSION = "1.0.3"
 API_BASE = "https://api.alldebrid.com"
 
 
@@ -835,12 +835,21 @@ class App:
         ttk.Button(
             toolbar,
             text="Télécharger la sélection",
-            command=lambda: self.download_selected_magnet_file(tree, rows, win),
+            command=lambda: self.download_selected_magnet_files(tree, rows, win),
         ).pack(side="right")
+        ttk.Button(
+            toolbar,
+            text="Tout sélectionner",
+            command=lambda: tree.selection_set(*tree.get_children()),
+        ).pack(side="right", padx=(0, 8))
+        ttk.Label(
+            toolbar,
+            text="Ctrl/Shift + clic pour sélectionner plusieurs fichiers",
+        ).pack(side="right", padx=(0, 12))
 
         frame = ttk.Frame(win)
         frame.pack(fill="both", expand=True, padx=10, pady=(0, 10))
-        tree = ttk.Treeview(frame, columns=("name", "size"), show="headings", selectmode="browse")
+        tree = ttk.Treeview(frame, columns=("name", "size"), show="headings", selectmode="extended")
         tree.heading("name", text="Fichier")
         tree.heading("size", text="Taille")
         tree.column("name", width=700)
@@ -863,23 +872,47 @@ class App:
                     human_bytes(int(item.get("size") or 0)),
                 ),
             )
+        def select_all(_event=None):
+            children = tree.get_children()
+            if children:
+                tree.selection_set(*children)
+            return "break"
+
+        tree.bind("<Control-a>", select_all)
+        tree.bind("<Control-A>", select_all)
         tree.bind(
             "<Double-1>",
-            lambda _e: self.download_selected_magnet_file(tree, rows, win),
+            lambda _e: self.download_selected_magnet_files(tree, rows, win),
         )
 
-    def download_selected_magnet_file(self, tree, rows, win) -> None:
+    def download_selected_magnet_files(self, tree, rows, win) -> None:
         selected = tree.selection()
         if not selected:
-            messagebox.showinfo(APP_NAME, "Sélectionne un fichier.", parent=win)
+            messagebox.showinfo(APP_NAME, "Sélectionne au moins un fichier.", parent=win)
             return
-        item = rows[selected[0]]
-        url = str(item.get("link") or "")
-        filename = str(item.get("filename") or AllDebrid._name_from_url(url))
-        if not url:
-            messagebox.showerror(APP_NAME, "URL du fichier absente.", parent=win)
-            return
-        self.queue_download(url, filename)
+
+        queued = 0
+        missing_url = 0
+        for iid in selected:
+            item = rows.get(iid)
+            if not item:
+                continue
+            url = str(item.get("link") or "").strip()
+            if not url:
+                missing_url += 1
+                continue
+            filename = str(item.get("filename") or AllDebrid._name_from_url(url))
+            self.queue_download(url, filename)
+            queued += 1
+
+        if queued:
+            self.status_var.set(f"{queued} fichier(s) ajouté(s) au traitement")
+        if missing_url:
+            messagebox.showwarning(
+                APP_NAME,
+                f"{missing_url} fichier(s) sélectionné(s) n'ont pas d'URL et ont été ignorés.",
+                parent=win,
+            )
 
     # ----- téléchargements -----
 

@@ -1,4 +1,4 @@
-# Bebrid Magic Windows 1.0.2
+# Bebrid Magic Windows 1.0.3
 
 Cette version remplace l'interface HTML/PyWebView de la 1.0.0 par une interface
 Windows native Tkinter.
@@ -40,7 +40,7 @@ La configuration est conservée ici :
 
 `%LOCALAPPDATA%\BebridMagic\config.json`
 
-La V1.0.2 réutilise donc la même configuration que la V1.0.0.
+La V1.0.3 réutilise donc la même configuration que les versions précédentes.
 
 Journal de diagnostic :
 
@@ -67,3 +67,13 @@ La fenêtre de build ne se ferme pas en cas d'erreur.
 - les liens `l` issus des magnets passent eux aussi par `/v4/link/unlock` ;
 - prise en charge des liens AllDebrid différés avec interrogation toutes les 5 secondes ;
 - protection contre l'enregistrement accidentel d'une page HTML AllDebrid à la place du fichier.
+
+
+## Corrections V1.0.3
+
+- multisélection dans **Voir les fichiers** d’un magnet ;
+- `Ctrl + clic` pour sélectionner plusieurs fichiers séparés ;
+- `Shift + clic` pour sélectionner une plage ;
+- `Ctrl + A` et bouton **Tout sélectionner** ;
+- **Télécharger la sélection** ajoute tous les fichiers sélectionnés à la file de traitement ;
+- aucun changement du fonctionnement AllDebrid validé en V1.0.2.
